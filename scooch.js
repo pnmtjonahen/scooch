@@ -123,30 +123,11 @@ function serveDynamicCss(filename, response) {
  * Serve model.js dynamic content.
  *
  * @param {type} response write response to
+ * @param {type} data response body
  */
-function serveModel(response) {
+function serveModel(response, data) {
    response.writeHead(200, headerContentTypeByExtension('.json'));
-   response.write(JSON.stringify(model.buildModel()), "binary");
-   response.end();
-}
-function serveModelTransitions(response) {
-   response.writeHead(200, headerContentTypeByExtension('.json'));
-   response.write(JSON.stringify(model.transitions()), "binary");
-   response.end();
-}
-function serveModelTemplates(response) {
-   response.writeHead(200, headerContentTypeByExtension('.json'));
-   response.write(JSON.stringify(model.templates()), "binary");
-   response.end();
-}
-function serveModelThemes(response) {
-   response.writeHead(200, headerContentTypeByExtension('.json'));
-   response.write(JSON.stringify(model.themes()), "binary");
-   response.end();
-}
-function serveModelSlides(response) {
-   response.writeHead(200, headerContentTypeByExtension('.json'));
-   response.write(JSON.stringify(model.slides()), "binary");
+   response.write(JSON.stringify(data), "binary");
    response.end();
 }
 
@@ -174,15 +155,15 @@ http.createServer(function (request, response) {
    if (!startsWith(path.normalize(filename), process.cwd())) {
       sendContentNotFound(filename, response);
    } else if (endsWith(filename, 'api/model')) {
-      serveModel(response);
+      serveModel(response, model.buildModel());
    } else if (endsWith(filename, 'api/model/transitions')) {
-      serveModelTransitions(response);
+      serveModel(response, model.transitions());
    } else if (endsWith(filename, 'api/model/templates')) {
-      serveModelTemplates(response);
+      serveModel(response, model.templates());
    } else if (endsWith(filename, 'api/model/themes')) {
-      serveModelThemes(response);
+      serveModel(response, model.themes());
    } else if (endsWith(filename, 'api/model/slides')) {
-      serveModelSlides(response);
+      serveModel(response, model.slides());
    } else if (endsWith(filename, ".css")) {
       serveCss(filename, response);
    } else {
